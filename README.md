@@ -1,7 +1,7 @@
 ## childmath
 Python script used to generate child math problems with TKinter GUI. -- 这个python程序使用了TKinter GUI 包，可以产生儿童的数学题。
 
-### How to use git command 
+## How to use git command 
 
 	1. 打开github，登陆自己的主页
 
