@@ -199,11 +199,11 @@ def MathTypeChose():
     master.mainloop()
     
 
-#************************************
+#**********************************************
 # Function: GetUnionNumber( num )
 #
-# Used    : 得到所有小于Num的合数
-#*************************************
+# Used    : 得到所有小于Num的合数,和其数量
+#**********************************************
 def GetUnionNumber(Num):
     union_l = []
     for i in range(2, Num):
@@ -230,42 +230,40 @@ def DecompositionPrime(Num):
 
 
 #************************************
-# Function: GetPrimeNumber( num )
+# Function: GetPrimeNumber( n )
 #
 # Used    : 得到Num的所有的质数因子
 #*************************************
 def GetPrimeNumber(Num):
     prime_l, prime_num = DecompositionPrime(Num)
-    print(prime_l)
-    print(prime_num)
-    for num in prime_l:
-        for i in range(2,num//2):
-            if num%i == 0:
-                prime_l.remove(num)
-                prime_num -= 1
+    #print(prime_l)
+    #print(prime_num)
+    prime_l2 = prime_l.copy()
+    for n in prime_l:
+        for i in range(2,n):
+            if n%i == 0:
+                prime_l2.remove(n)
                 break
-    print(prime_l)
-    print(prime_num)
-    return prime_l, prime_num
+    return prime_l2, len(prime_l2)
 
 
-#***************************************************************
+#*******************************************************************
 # Function: GetRandUnionPrime(Num)
 #
-# Used    : 随机返回Num以内的合数，并随机返回这个合数的一个因子
-#***************************************************************
+# Used    : 随机返回小于Num的一个合数，并随机返回这个合数的一个约数
+#*******************************************************************
 def GetRandUnionPrime(Num):
     union_l, union_num = GetUnionNumber(Num)
-    rand_union = union_l[rd.randint(union_num)]
-    print(rand_union)
-    print(rand_union)
+    rand_union = union_l[rd.randint(0,union_num-1)]
+    #print(rand_union)
+    #print(rand_union)
     
     prime_l, prime_num = DecompositionPrime(rand_union)
-    rand_prime = prime_l[rd.randint(prime_num)]
-    print(rand_prime)
-    print(prime_l)
+    rand_prime = prime_l[rd.randint(0,prime_num-1)]
+    #print(rand_prime)
+    #print(prime_l)
 
-    return union_l, rand_prime
+    return rand_union, rand_prime
 
 
 
@@ -280,11 +278,13 @@ def GenerateMathProblem():
     # 产生一道题：
     name = () # ("题目"，结果)
     type_list = [1, 2, 3, 4] ## == ["加", "减"，"乘"，"除"]
+    type_dic  = {1:" + ", 2:" - ", 3:" × ", 4:" ÷ "}
+    
     if Ret_math_type == 5:   ## 混合运算
         
         ## 有两个操作数
         if Ret_opera_num == 2:
-            gen_type = type_list[rd.randint(1,4)]
+            gen_type = type_list[rd.randint(0,3)]
 
             opera1 = rd.randint(1, Ret_math_range)
             if gen_type == 1: # 加
@@ -310,64 +310,66 @@ def GenerateMathProblem():
         
         ## 有三个操作数
         elif Ret_opera_num == 3:
-            type_list.append(type_list[rd.randint(1,4)])
-            type_list.append(type_list[rd.randint(1,4)])
-            
-            if   type_list==[1,1]: # a + b + c
+            gen_type = []
+            gen_type.append(type_list[rd.randint(0,3)])
+            gen_type.append(type_list[rd.randint(0,3)])
+            #print ("type: " +str(gen_type))
+
+            if gen_type==[1,1]: # a + b + c
                 opera1 = rd.randint(1, Ret_math_range)
                 opera2 = rd.randint(1, Ret_math_range)
                 opera3 = rd.randint(1, Ret_math_range)
                 prob_result =  opera1 + opera2 + opera3
-            elif type_list==[1,2]: # a + b - c
+            elif gen_type==[1,2]: # a + b - c
                 opera1 = rd.randint(1, Ret_math_range)
                 opera2 = rd.randint(1, Ret_math_range)
                 opera3 = rd.randint(1, opera1 + opera2)   
                 #if (opera1 + opera2) > Ret_math_range:  # FIXME
                 #    opera3 = rd.randint(1, Ret_math_range)
                 prob_result =  opera1 + opera2 - opera3
-            elif type_list==[1,3]: # a + b x c
+            elif gen_type==[1,3]: # a + b x c
                 opera1 = rd.randint(1, Ret_math_range)
                 opera2 = rd.randint(1, Ret_math_range)
                 opera3 = rd.randint(1, Ret_math_range)
                 prob_result =  opera1 + (opera2 * opera3)
-            elif type_list==[1,4]: # a + b / c
+            elif gen_type==[1,4]: # a + b / c
                 opera1 = rd.randint(1, Ret_math_range)                
                 union_list, union_list_num = GetUnionNumber(Ret_math_range)
-                opera2 = union_list[rd.randint(1,union_list_num)]
+                opera2 = union_list[rd.randint(1,union_list_num-1)]
                 prime_list, prime_list_num = DecompositionPrime(opera2)
-                opera3 = prime_list[rd.randint(1,prime_list_num)]
+                opera3 = prime_list[rd.randint(1,prime_list_num-1)]
                 prob_result =  opera1 + (opera2 / opera3)
                 
-            elif type_list==[2,1]: # a - b + c
+            elif gen_type==[2,1]: # a - b + c
                 opera1 = rd.randint(1, Ret_math_range)
                 opera2 = rd.randint(1, opera1)
                 opera3 = rd.randint(1, Ret_math_range)   
                 prob_result =  opera1 - opera2 + opera3
                 
-            elif type_list==[2,2]: # a - b - c
+            elif gen_type==[2,2]: # a - b - c
                 tmp = rd.randint(2, Ret_math_range)
                 opera2 = rd.randint(1, tmp)
                 opera3 = tmp - opera2
                 opera1 = rd.randint(tmp, Ret_math_range)
                 prob_result =  opera1 - opera2 - opera3
 
-            elif type_list==[2,3]: # a - b x c
-                tmp, opera2 = GetUnionNumber(Ret_math_range)
-                opera3 = tmp/opera2
+            elif gen_type==[2,3]: # a - b x c
+                tmp, opera2 = GetRandUnionPrime(Ret_math_range)
+                opera3 = int(tmp/opera2)
                 opera1 = rd.randint(tmp, Ret_math_range) 
                 prob_result = opera1 - opera2 * opera3 
 
-            elif type_list==[2,4]: # a - b / c
-                opera2, opera3 = GetUnionNumber(Ret_math_range)
+            elif gen_type==[2,4]: # a - b / c
+                opera2, opera3 = GetRandUnionPrime(Ret_math_range)
                 tmp = opera2/opera3
                 opera1 = rd.randint(tmp, Ret_math_range) 
-                prob_result = opera1 - opera2 / opera3 
-            elif type_list==[3,1]: # a * b + c
+                prob_result = opera1 - int(opera2 / opera3) 
+            elif gen_type==[3,1]: # a * b + c
                 opera1 = rd.randint(1, Ret_math_range)
                 opera2 = rd.randint(1, Ret_math_range)
                 opera3 = rd.randint(1, Ret_math_range)
                 prob_result =  opera1 * opera2 + opera3
-            elif type_list==[3,2]: # a * b - c
+            elif gen_type==[3,2]: # a * b - c
                 opera1 = rd.randint(1, Ret_math_range)
                 opera2 = rd.randint(1, Ret_math_range)
                 opera3 = rd.randint(1, Ret_math_range)
@@ -375,52 +377,51 @@ def GenerateMathProblem():
                     opera3 = rd.randint(1, opera1 * opera2)
                 prob_result =  opera1 * opera2 - opera3
                 
-            elif type_list==[3,3]: # a * b * c
+            elif gen_type==[3,3]: # a * b * c
                 opera1 = rd.randint(1, Ret_math_range)
                 opera2 = rd.randint(1, Ret_math_range)
                 opera3 = rd.randint(1, Ret_math_range)
                 prob_result =  opera1 * opera2 - opera3
 
-            elif type_list==[3,4]: # a * b / c
+            elif gen_type==[3,4]: # a * b / c
                 opera1 = rd.randint(1, Ret_math_range)
                 opera2 = rd.randint(1, Ret_math_range)
                 prime_list, prime_list_num = DecompositionPrime(opera1 * opera2)
-                opera3 = prime_list[rd.randint(prime_list_num)]
-                prob_result =  opera1 * opera2 / opera3
+                opera3 = prime_list[rd.randint(0,prime_list_num-1)]
+                prob_result =  int(opera1 * opera2 / opera3)
 
-            elif type_list==[4,1]: # a / b + c
+            elif gen_type==[4,1]: # a / b + c
                 opera1, opera2 = GetRandUnionPrime(Ret_math_range)
                 opera3 = rd.randint(1, Ret_math_range)
-                prob_result =  opera1 / opera2 + opera3
+                prob_result =  opera1 // opera2 + opera3
                 
-            elif type_list==[4,2]: # a / b - c
+            elif gen_type==[4,2]: # a / b - c
                 opera1, opera2 = GetRandUnionPrime(Ret_math_range)
-                opera3 = rd.randint(1, opera1/opera2)
-                prob_result =  opera1 / opera2 - opera3
+                opera3 = rd.randint(1, opera1//opera2)
+                prob_result =  opera1 // opera2 - opera3
 
-            elif type_list==[4,3]: # a / b * c
+            elif gen_type==[4,3]: # a / b * c
                 opera1, opera2 = GetRandUnionPrime(Ret_math_range)
                 opera3 = rd.randint(1, Ret_math_range)
-                prob_result =  opera1 / opera2 * opera3 
-            elif type_list==[4,4]: # a / b / c
-                union_list, union_list_num  = GetUnionNumber(Ret_math_range)
-                while 1: 
-                    tmp =  union_list[rd.randint(union_list_num)]
-                    prime_list, prime_list_num = GetPrimeNumber(tmp)
-                    if prime_list_num > 2:
+                prob_result =  opera1 // opera2 * opera3 
+            elif gen_type==[4,4]: # a / b / c
+                while 1:
+                    opera2 = rd.randint(2, Ret_math_range//2)
+                    opera3 = rd.randint(2, Ret_math_range//2)
+                    opera1 = opera2 * opera3 * rd.randint(2, Ret_math_range//2)
+                    if opera1 <= Ret_math_range:
                         break
-                opera1 = tmp
-                opera2 = prime_list[rd.randint(prime_list_num)]
-                opera3 = prime_list[rd.randint(prime_list_num)]
-                prob_result =  opera1 / opera2 / opera3 
+                prob_result =  int(opera1 / opera2 / opera3)
                 
-
+            prob_tuple = str(opera1) + type_dic[gen_type[0]] + str(opera2) + type_dic[gen_type[1]] + str(opera3) + " = " 
+            print (prob_tuple, prob_result)
             
     
 
 ####################### Main ###########################
 if __name__ == "__main__":
-
+    
+    rd.seed(int(sys.argv[1]))
     WELCOM_TIME = 2
     
     #WelcomeWindow(WELCOM_TIME)
@@ -428,5 +429,9 @@ if __name__ == "__main__":
     #MathTypeChose()
     #print(Ret_math_range, Ret_math_type, Ret_opera_num, Ret_math_num)
 
-    #GetRandUnionPrime(100)
-    GetPrimeNumber(100)
+    Ret_math_range  = 100
+    Ret_math_type   = 5
+    Ret_opera_num   = 3
+    Ret_math_num    = 20
+
+    GenerateMathProblem()
