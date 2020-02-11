@@ -27,15 +27,7 @@ def WelcomeWindow(Last_time):
     wc = tk.Label(welwin, image=gif_file)
     wc.pack()
     
-    # set time lenght of Weclome GUI.
-    def shutMaster():
-        time.sleep(Last_time) 
-        time.sleep(1.8) 
-        welwin.quit()
-        time.sleep(0.1)
-
-    func_quit = threading.Thread(target=shutMaster)
-    func_quit.start()
+    welwin.after(2000, welwin.destroy)
     welwin.mainloop()
 
 
@@ -118,10 +110,10 @@ def MathTypeChose():
     group4.grid(row=3,column=3, padx=10,pady=10)
 
     math_num = tk.IntVar()
-    tk.Radiobutton(group4, text="200", variable=math_num, value=2).grid(row=4, column=0, sticky="w")
-    tk.Radiobutton(group4, text="100", variable=math_num, value=3).grid(row=5, column=0, sticky="w")
-    tk.Radiobutton(group4, text="50",  variable=math_num, value=4).grid(row=6, column=0, sticky="w")
-    tk.Radiobutton(group4, text="30",  variable=math_num, value=5).grid(row=7, column=0, sticky="w")
+    tk.Radiobutton(group4, text="200", variable=math_num, value=200).grid(row=4, column=0, sticky="w")
+    tk.Radiobutton(group4, text="100", variable=math_num, value=100).grid(row=5, column=0, sticky="w")
+    tk.Radiobutton(group4, text="50",  variable=math_num, value=50).grid(row=6, column=0, sticky="w")
+    tk.Radiobutton(group4, text="30",  variable=math_num, value=30).grid(row=7, column=0, sticky="w")
 
     ent1 = tk.Label(group4, text="自定义：",font=("华文行楷",8), fg="black")
     ent1.grid(row=8,column=0, sticky="E")
@@ -482,15 +474,13 @@ if __name__ == "__main__":
     rd.seed(int(sys.argv[1]))
     WELCOM_TIME = 2
     
-    #WelcomeWindow(WELCOM_TIME)
-    #time.sleep(WELCOM_TIME)
-    #MathTypeChose()
-    #print(Ret_math_range, Ret_math_type, Ret_opera_num, Ret_math_num)
+    WelcomeWindow(WELCOM_TIME)
+    MathTypeChose()
+    print(Ret_math_range, Ret_math_type, Ret_opera_num, Ret_math_num)
 
-    Ret_math_range  = 100
-    Ret_math_type   = 5
-    Ret_opera_num   = 3
-    Ret_math_num    = 100
+    #Ret_math_range  = 100
+    #Ret_math_type   = 5
+    #Ret_opera_num   = 3
+    #Ret_math_num    = 100
 
-    #GenerateMathProblem()
     GenerateAllProblem(Ret_math_num)
