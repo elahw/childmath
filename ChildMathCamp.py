@@ -503,7 +503,6 @@ def ProblemWin(problem_list):
     def NextArray():
         global array_no
         global Answer_Tuple_List
-        array_no += 1
         
         ## 
         for en_no in range(len(entry_list)):
@@ -523,16 +522,15 @@ def ProblemWin(problem_list):
                 tm.showwarning("注意：", txt)
                 return 0
                 
-            print (answer_tuple)
+            #print (answer_tuple)
             Answer_Tuple_List.append(answer_tuple)
             
-
-
-
-
         prowin.destroy()
-        ProblemWin(problem_list)
-    
+        array_no += 1
+        if array_no <= Arry_Num:
+            ProblemWin(problem_list)
+
+
     def WinWarning():
         mssg = "还未做完，要推出吗？"
         flag = tm.askokcancel("注意", mssg)
@@ -541,11 +539,8 @@ def ProblemWin(problem_list):
             sys.exit(0)
 
 
-    def SubmitAnswer():
-        pass        
-
     if array_no == Arry_Num:
-        tk.Button(prowin, text="我要交卷", command=prowin.destroy).grid(row=i, column=0, padx=10, pady=10) 
+        tk.Button(prowin, text="我要交卷", command=NextArray).grid(row=i, column=0, padx=10, pady=10) 
     else:
         tk.Button(prowin, text="下一组", command=NextArray).grid(row=i, column=0, padx=10, pady=10) 
 
@@ -556,8 +551,71 @@ def ProblemWin(problem_list):
     prowin.mainloop()
 
 
+#********************************************
+# Function: PraiseWin()
+#
+# Used    : 如果得了100分或0分，显示表扬界面
+#********************************************
+def PraiseWin(score):
+    praw = tk.Tk()
+    praw.title("评语板")
+
+    if score == 100:
+        gif_file = tk.PhotoImage(file="/home/alex/Desktop/child_camp_picture/fen_100.gif")
+    elif score == 0:
+        gif_file = tk.PhotoImage(file="/home/alex/Desktop/child_camp_picture/fen_0.gif")
+    elif score >= 60: ## FIXME 及格，继续努力
+        pass 
+    else:             ## FIXME 不及格，要更加努力才行啊！
+        pass
+
+    tk.Label(praw, image=gif_file).pack()
+
+    praw.after(2000, praw.destroy)
+    praw.mainloop()
+
+        
+#********************************************
+# Function: MathScoreBoard()
+#
+# Used    : 总结做题的正确率，并在窗口展示
+#********************************************
+def MathScoreBoard(answer_list):
+    right_cnt = 0
+    wrong_cnt = 0
+    empty_cnt = 0
+    for rst in answer_list:
+        if rst[3] == "Right":
+            right_cnt += 1
+        elif rst[3] == "Wrong":
+            wrong_cnt += 1
+        else:
+            empty_cnt += 1
+    
+    score_cnt = int(right_cnt / len(answer_list) * 100)
+    
+    wrong_text = "错误数量：%1d" %right_cnt
+    rihgt_text = "正确数量：%1d" %wrong_cnt
+    empty_text = "没做数量：%1d" %empty_cnt
+    score_text = "本次得分：%1d" %score_cnt
     
 
+    ## 如果得了满分或者0分，显示表扬界面
+    #score_cnt = 100
+    if  score_cnt in [0,100]:
+        PraiseWin(score_cnt)
+
+    ## 弹出窗口显示得分
+    score_win = tk.Tk()
+    score_win.title("积分板")
+    score_win.geometry("200x400")
+
+    tk.Label(score_win, text=score_text,font=("华文行楷",20), fg="red").pack()
+    tk.Label(score_win, text=rihgt_text,font=("华文行楷",20), fg="red").pack()
+    tk.Label(score_win, text=wrong_text,font=("华文行楷",20), fg="red").pack()
+    tk.Label(score_win, text=empty_text,font=("华文行楷",20), fg="red").pack()
+    
+    score_win.mainloop()
 
 
 ####################### Main ###########################
@@ -572,8 +630,9 @@ if __name__ == "__main__":
 
     Ret_math_range  = 100
     Ret_math_type   = 5
-    Ret_opera_num   = 3
-    Ret_math_num    = 53
+    Ret_opera_num   = 2
+    Ret_math_num    = 8
+
     Problem_List = []
     Problem_List = GenerateAllProblem(Ret_math_num)
     
@@ -588,4 +647,6 @@ if __name__ == "__main__":
 
     ProblemWin(Problem_List)
     
-    print (Answer_Tuple_List)
+    #print (Answer_Tuple_List)
+    time.sleep(2)
+    MathScoreBoard(Answer_Tuple_List)
