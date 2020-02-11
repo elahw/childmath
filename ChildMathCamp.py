@@ -8,6 +8,7 @@ import time
 import threading
 import sys
 
+
 def WelcomeWindow(Last_time):
     welwin = tk.Tk()
     #tm.showinfo("Hello World !")
@@ -468,19 +469,123 @@ def GenerateAllProblem(problem_number):
     return problem_list
 
 
+
+#************************************
+# Function: ProblemWin()
+#
+# Used    : 产生题目的大窗口
+#*************************************
+def ProblemWin(problem_list):
+    prowin = tk.Tk()
+
+    win_title = "第%1d组 共%1d组" %(array_no, Arry_Num) 
+    prowin.title(win_title)
+    prowin.geometry("400x550")
+    
+    if array_no < Arry_Num:
+        arry_problem_list = problem_list[(array_no-1)*10:array_no*10 ]
+    else:
+        arry_problem_list = problem_list[(array_no-1)*10:]
+        
+
+    i = 0
+    entry_list = []
+    for sing_prob in arry_problem_list:
+        
+        prob_txt = sing_prob[0] 
+        tk.Label(prowin, text =prob_txt, font=("华文行楷",15), fg="blue" ).grid(row=i, column=0, sticky="E",padx=10, pady=10)
+        enty = tk.Entry(prowin, width=10)
+        enty.grid(row=i, column=1, sticky="W",padx=10, pady=10)
+
+        entry_list.append(enty)
+        i += 1
+
+    def NextArray():
+        global array_no
+        global Answer_Tuple_List
+        array_no += 1
+        
+        ## 
+        for en_no in range(len(entry_list)):
+            try:
+                if entry_list[en_no].get()=="":
+                    input_rst = None
+                    judge = "Empty"
+                else:
+                    input_rst = int(entry_list[en_no].get())
+                    if input_rst == arry_problem_list[en_no][1]:
+                        judge = "Right"
+                    else:
+                        judge = "Wrong"
+                answer_tuple = arry_problem_list[en_no] + (input_rst, judge)
+            except:
+                txt = "第%1d道题填入的不是数字" % (en_no+1)
+                tm.showwarning("注意：", txt)
+                return 0
+                
+            print (answer_tuple)
+            Answer_Tuple_List.append(answer_tuple)
+            
+
+
+
+
+        prowin.destroy()
+        ProblemWin(problem_list)
+    
+    def WinWarning():
+        mssg = "还未做完，要推出吗？"
+        flag = tm.askokcancel("注意", mssg)
+        if flag:  ## return True or False
+            prowin.destroy()
+            sys.exit(0)
+
+
+    def SubmitAnswer():
+        pass        
+
+    if array_no == Arry_Num:
+        tk.Button(prowin, text="我要交卷", command=prowin.destroy).grid(row=i, column=0, padx=10, pady=10) 
+    else:
+        tk.Button(prowin, text="下一组", command=NextArray).grid(row=i, column=0, padx=10, pady=10) 
+
+    #if array_no > 1: # FIXME
+    #    tk.Button(prowin, text="上一组").grid(row=i, column=1, padx=10, pady=10)  
+    
+    prowin.protocol("WM_DELETE_WINDOW",WinWarning)   
+    prowin.mainloop()
+
+
+    
+
+
+
 ####################### Main ###########################
 if __name__ == "__main__":
     
     rd.seed(int(sys.argv[1]))
     WELCOM_TIME = 2
     
-    WelcomeWindow(WELCOM_TIME)
-    MathTypeChose()
-    print(Ret_math_range, Ret_math_type, Ret_opera_num, Ret_math_num)
+    #WelcomeWindow(WELCOM_TIME)
+    #MathTypeChose()
+    #print(Ret_math_range, Ret_math_type, Ret_opera_num, Ret_math_num)
 
-    #Ret_math_range  = 100
-    #Ret_math_type   = 5
-    #Ret_opera_num   = 3
-    #Ret_math_num    = 100
+    Ret_math_range  = 100
+    Ret_math_type   = 5
+    Ret_opera_num   = 3
+    Ret_math_num    = 53
+    Problem_List = []
+    Problem_List = GenerateAllProblem(Ret_math_num)
+    
+    Problem_Num = len(Problem_List)
+    Every_Arry_Num = 10
+    
+    Arry_Num    = Problem_Num//Every_Arry_Num if Problem_Num%Every_Arry_Num==0 else\
+                  Problem_Num//Every_Arry_Num + 1
+    array_no = 1
+    Answer_Tuple_List = []
+    Answer_Dic = {0:"Right", 1:"Wrong", 3:"Empty" }
 
-    GenerateAllProblem(Ret_math_num)
+    ProblemWin(Problem_List)
+    
+    print (Answer_Tuple_List)
