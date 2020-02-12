@@ -14,14 +14,14 @@ def WelcomeWindow(Last_time):
     #tm.showinfo("Hello World !")
     welwin.title('Maths Welcome You !')
     
-    #sw = welwin.winfo_screenwidth()
-    #sh = welwin.winfo_screenheight()
-    #ww = 500
-    #hh = 500
-    #x = (sw - ww)/2
-    #y = (sh - hh)/2
-    #
-    #welwin.geometry("%dx%d+%d+%d"%(ww,hh, x,y))
+    sw = welwin.winfo_screenwidth()
+    sh = welwin.winfo_screenheight()
+    ww = 500
+    hh = 500
+    x = (sw - ww)/2
+    y = (sh - hh)/2
+    
+    welwin.geometry("+%d+%d"%(x,y))
 
     #wc = tk.Label(welwin, text="欢迎来\n儿童数学训练营",font=("华文行楷", 40), fg="red", justify = "center")
     gif_file = tk.PhotoImage(file="/home/alex/Desktop/child_camp_picture/welcome_picture.gif")
@@ -181,11 +181,11 @@ def MathTypeChose():
                 tm.showwarning("注意",txt)
                 return 0
         #print(Ret_math_num)
-        master.quit()
+        master.destroy()
 
 
     def ExitGui():
-        master.quit()
+        master.destroy()
         sys.exit(0) 
 
     tk.Button(master, text="题型已经选好", command=SubmitType, font=("华文行楷"), fg="blue",bg="yellow").grid(row=9, column=1, sticky="w")
@@ -463,7 +463,7 @@ def GenerateAllProblem(problem_number):
     problem_list = []
     for i in range(problem_number):
         problem_tuple = GenerateMathProblem()
-        print (problem_tuple)
+        #print (problem_tuple)
         problem_list.append(problem_tuple)
     #print(problem_list)
     return problem_list
@@ -560,6 +560,14 @@ def PraiseWin(score):
     praw = tk.Tk()
     praw.title("评语板")
 
+    sw = praw.winfo_screenwidth()
+    sh = praw.winfo_screenheight()
+    ww = praw.winfo_reqwidth()
+    hh = praw.winfo_reqheight()
+    x = (sw - ww)/2
+    y = (sh - hh)/2
+    praw.geometry("+%d+%d"%(x,y))
+
     if score == 100:
         gif_file = tk.PhotoImage(file="/home/alex/Desktop/child_camp_picture/fen_100.gif")
     elif score == 0:
@@ -574,7 +582,54 @@ def PraiseWin(score):
     praw.after(2000, praw.destroy)
     praw.mainloop()
 
-        
+
+#********************************************
+# Function: ReExecuteProgram()
+#
+# Used    : 点击“再做一次训练”，程序重新执行
+#********************************************
+def ReExecuteProgram():
+    global Ret_math_range
+    global Ret_math_type
+    global Ret_opera_num 
+    global Ret_math_num
+
+    global Problem_List
+    global Problem_Num
+    global Every_Arry_Num
+    global Arry_Num
+    global array_no
+    global Answer_Tuple_List
+    global Answer_Dic
+
+    Ret_math_range  = 0
+    Ret_math_type   = 0
+    Ret_opera_num   = 0
+    Ret_math_num    = 0
+
+    MathTypeChose()
+    Problem_List = []
+    Problem_List = GenerateAllProblem(Ret_math_num)
+
+
+    Problem_Num = len(Problem_List)
+    Every_Arry_Num = 10
+    
+    Arry_Num    = Problem_Num//Every_Arry_Num if Problem_Num%Every_Arry_Num==0 else\
+                  Problem_Num//Every_Arry_Num + 1
+    array_no = 1
+    Answer_Tuple_List = []
+    Answer_Dic = {0:"Right", 1:"Wrong", 3:"Empty" }
+
+    ProblemWin(Problem_List)
+    
+    #print (Answer_Tuple_List)
+    time.sleep(1)
+    MathScoreBoard(Answer_Tuple_List)
+    
+
+
+
 #********************************************
 # Function: MathScoreBoard()
 #
@@ -594,8 +649,8 @@ def MathScoreBoard(answer_list):
     
     score_cnt = int(right_cnt / len(answer_list) * 100)
     
-    wrong_text = "错误数量：%1d" %right_cnt
-    rihgt_text = "正确数量：%1d" %wrong_cnt
+    wrong_text = "错误数量：%1d" %wrong_cnt
+    rihgt_text = "正确数量：%1d" %right_cnt
     empty_text = "没做数量：%1d" %empty_cnt
     score_text = "本次得分：%1d" %score_cnt
     
@@ -610,10 +665,49 @@ def MathScoreBoard(answer_list):
     score_win.title("积分板")
     score_win.geometry("200x400")
 
-    tk.Label(score_win, text=score_text,font=("华文行楷",20), fg="red").pack()
-    tk.Label(score_win, text=rihgt_text,font=("华文行楷",20), fg="red").pack()
-    tk.Label(score_win, text=wrong_text,font=("华文行楷",20), fg="red").pack()
-    tk.Label(score_win, text=empty_text,font=("华文行楷",20), fg="red").pack()
+    tk.Label(score_win, text=score_text,font=("华文行楷",20), fg="red" ).pack()
+    tk.Label(score_win, text=rihgt_text,font=("华文行楷",20), fg="blue").pack()
+    tk.Label(score_win, text=wrong_text,font=("华文行楷",20), fg="red" ).pack()
+    tk.Label(score_win, text=empty_text,font=("华文行楷",20), fg="blue").pack()
+    
+    def ListWrongProb(list_wrong):
+        lbox = tk.Tk()
+        lbox.title("错误题目")
+        #lbox.geometry("200x600")
+        lb = tk.Listbox(lbox, width=40)
+        lb.pack()
+
+
+        for prob in answer_list:
+            if prob[3] == "Wrong":
+                sig = " 做错： 正确值 %1d" % prob[1]  
+            elif prob[3] == "Empty":
+                sig = " 没做： 正确值 %1d" % prob[1]
+            elif prob[3] == "Right":
+                sig = " 正确： ✔"
+
+            if list_wrong==1: 
+                if prob[3] in ["Wrong", "Empty"]:
+                    insert_text = prob[0] + str(prob[2]) + sig
+                    lb.insert("end", insert_text)
+            else:
+                insert_text = prob[0] + str(prob[2]) + sig
+                lb.insert("end", insert_text)
+        lbox.mainloop()
+
+
+    def ExitProgram(): 
+        score_win.destroy()
+        sys.exit(0)
+    
+    def ReExec():
+        score_win.destroy()
+        ReExecuteProgram()
+
+    tk.Button(score_win, text="查看错误题目", font=("华文行楷",20), fg="black",bg="yellow", command=lambda:ListWrongProb(1)).pack()
+    tk.Button(score_win, text="查看所有题目", font=("华文行楷",20), fg="black",bg="blue"  , command=lambda:ListWrongProb(0)).pack()
+    tk.Button(score_win, text="再做一次训练", font=("华文行楷",20), fg="black",bg="green"  ,command=ReExec).pack()
+    tk.Button(score_win, text="退出数学训练", font=("华文行楷",20), fg="black",bg="blue"  ,command=ExitProgram).pack()
     
     score_win.mainloop()
 
@@ -624,14 +718,14 @@ if __name__ == "__main__":
     rd.seed(int(sys.argv[1]))
     WELCOM_TIME = 2
     
-    #WelcomeWindow(WELCOM_TIME)
-    #MathTypeChose()
+    WelcomeWindow(WELCOM_TIME)
+    MathTypeChose()
     #print(Ret_math_range, Ret_math_type, Ret_opera_num, Ret_math_num)
 
-    Ret_math_range  = 100
-    Ret_math_type   = 5
-    Ret_opera_num   = 2
-    Ret_math_num    = 8
+    #Ret_math_range  = 100
+    #Ret_math_type   = 5
+    #Ret_opera_num   = 2
+    #Ret_math_num    = 8
 
     Problem_List = []
     Problem_List = GenerateAllProblem(Ret_math_num)
@@ -647,6 +741,5 @@ if __name__ == "__main__":
 
     ProblemWin(Problem_List)
     
-    #print (Answer_Tuple_List)
-    time.sleep(2)
+    time.sleep(1)
     MathScoreBoard(Answer_Tuple_List)
