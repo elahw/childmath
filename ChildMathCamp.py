@@ -1,6 +1,5 @@
 #! /usr/bin/python 
 # -*- coding: UTF-8 -*-
-
 import tkinter.messagebox as tm
 import tkinter as tk
 import random as rd
@@ -8,29 +7,41 @@ import time
 import threading
 import sys
 
+#********************************************
+# Function: WelcomeAndPraise()
+#
+# Used    : 如果得了100分或0分，显示表扬界面
+#********************************************
+def WelcomeAndPraise(welcome_flag, score):
+    praw = tk.Tk()
+    praw.title("评语板")
 
-def WelcomeWindow(Last_time):
-    welwin = tk.Tk()
-    #tm.showinfo("Hello World !")
-    welwin.title('Maths Welcome You !')
-    
-    sw = welwin.winfo_screenwidth()
-    sh = welwin.winfo_screenheight()
-    ww = 500
-    hh = 500
+    sw = praw.winfo_screenwidth()
+    sh = praw.winfo_screenheight()
+    ww = praw.winfo_reqwidth()
+    hh = praw.winfo_reqheight()
     x = (sw - ww)/2
     y = (sh - hh)/2
+    praw.geometry("+%d+%d"%(x,y))
     
-    welwin.geometry("+%d+%d"%(x,y))
+    if welcome_flag==0:
+        praw.title("评语板")
+        if score == 100:
+            gif_file = tk.PhotoImage(file=SCORE_100)
+        elif score == 0:
+            gif_file = tk.PhotoImage(file=SCORE_000)
+        elif score >= 60: ## FIXME 及格，继续努力
+            pass 
+        else:             ## FIXME 不及格，要更加努力才行啊！
+            pass
+    else:
+        praw.title('Maths Welcome You !')
+        gif_file = tk.PhotoImage(file=WELCOME_GIF)
 
-    #wc = tk.Label(welwin, text="欢迎来\n儿童数学训练营",font=("华文行楷", 40), fg="red", justify = "center")
-    gif_file = tk.PhotoImage(file="/home/alex/Desktop/child_camp_picture/welcome_picture.gif")
-    wc = tk.Label(welwin, image=gif_file)
-    wc.pack()
-    
-    welwin.after(2000, welwin.destroy)
-    welwin.mainloop()
+    tk.Label(praw, image=gif_file).pack()
 
+    praw.after(WAIT_TIME, praw.destroy)
+    praw.mainloop()
 
 
 #*****************************************************
@@ -168,7 +179,7 @@ def MathTypeChose():
         ## 得到需要计算的题目的数量
         if en1.get() != "":
             try:
-                Ret_math_range = int(en1.get())
+                Ret_math_num = int(en1.get())
             except:
                 txt = "题目数量: 自定义\"" + en1.get() + "\"不是有效的数字！"
                 #tk.Message(master, text=txt).pack()
@@ -551,37 +562,6 @@ def ProblemWin(problem_list):
     prowin.mainloop()
 
 
-#********************************************
-# Function: PraiseWin()
-#
-# Used    : 如果得了100分或0分，显示表扬界面
-#********************************************
-def PraiseWin(score):
-    praw = tk.Tk()
-    praw.title("评语板")
-
-    sw = praw.winfo_screenwidth()
-    sh = praw.winfo_screenheight()
-    ww = praw.winfo_reqwidth()
-    hh = praw.winfo_reqheight()
-    x = (sw - ww)/2
-    y = (sh - hh)/2
-    praw.geometry("+%d+%d"%(x,y))
-
-    if score == 100:
-        gif_file = tk.PhotoImage(file="/home/alex/Desktop/child_camp_picture/fen_100.gif")
-    elif score == 0:
-        gif_file = tk.PhotoImage(file="/home/alex/Desktop/child_camp_picture/fen_0.gif")
-    elif score >= 60: ## FIXME 及格，继续努力
-        pass 
-    else:             ## FIXME 不及格，要更加努力才行啊！
-        pass
-
-    tk.Label(praw, image=gif_file).pack()
-
-    praw.after(2000, praw.destroy)
-    praw.mainloop()
-
 
 #********************************************
 # Function: ReExecuteProgram()
@@ -658,7 +638,7 @@ def MathScoreBoard(answer_list):
     ## 如果得了满分或者0分，显示表扬界面
     #score_cnt = 100
     if  score_cnt in [0,100]:
-        PraiseWin(score_cnt)
+        WelcomeAndPraise(0,score_cnt)
 
     ## 弹出窗口显示得分
     score_win = tk.Tk()
@@ -712,15 +692,31 @@ def MathScoreBoard(answer_list):
     score_win.mainloop()
 
 
-####################### Main ###########################
+
+
+################################# Main #########################################
 if __name__ == "__main__":
     
+    #********************* Const Parameter *********************#
+    WELCOME_GIF = "welcome.gif"  # 欢迎界面
+    SCORE_000   = "fen_0.gif"    # 评判界面：得了100分
+    SCORE_100   = "fen_100.gif"  # 评判界面：得了 0 分
+    WAIT_TIME   = 2000           # 界面的持续时间： 2000 毫秒
+    #***********************************************************#
+   
+    #******************* Global Variable ***********************#
+    Ret_math_range  = 0 
+    Ret_math_type   = 0
+    Ret_opera_num   = 0
+    Ret_math_num    = 0
+    #***********************************************************#
+
+
     rd.seed(int(sys.argv[1]))
     WELCOM_TIME = 2
     
-    WelcomeWindow(WELCOM_TIME)
+    WelcomeAndPraise(welcome_flag=1, score=0)
     MathTypeChose()
-    #print(Ret_math_range, Ret_math_type, Ret_opera_num, Ret_math_num)
 
     #Ret_math_range  = 100
     #Ret_math_type   = 5
