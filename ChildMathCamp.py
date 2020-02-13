@@ -489,14 +489,14 @@ def GenerateAllProblem(problem_number):
 def ProblemWin(problem_list):
     prowin = tk.Tk()
 
-    win_title = "第%1d组 共%1d组" %(array_no, Arry_Num) 
+    win_title = "第%1d组 共%1d组" %(Array_no, Arry_Num) 
     prowin.title(win_title)
     prowin.geometry("400x550")
     
-    if array_no < Arry_Num:
-        arry_problem_list = problem_list[(array_no-1)*10:array_no*10 ]
+    if Array_no < Arry_Num:
+        arry_problem_list = problem_list[(Array_no-1)*10:Array_no*10 ]
     else:
-        arry_problem_list = problem_list[(array_no-1)*10:]
+        arry_problem_list = problem_list[(Array_no-1)*10:]
         
 
     i = 0
@@ -512,7 +512,7 @@ def ProblemWin(problem_list):
         i += 1
 
     def NextArray():
-        global array_no
+        global Array_no
         global Answer_Tuple_List
         
         ## 
@@ -537,8 +537,8 @@ def ProblemWin(problem_list):
             Answer_Tuple_List.append(answer_tuple)
             
         prowin.destroy()
-        array_no += 1
-        if array_no <= Arry_Num:
+        Array_no += 1
+        if Array_no <= Arry_Num:
             ProblemWin(problem_list)
 
 
@@ -550,12 +550,12 @@ def ProblemWin(problem_list):
             sys.exit(0)
 
 
-    if array_no == Arry_Num:
+    if Array_no == Arry_Num:
         tk.Button(prowin, text="我要交卷", command=NextArray).grid(row=i, column=0, padx=10, pady=10) 
     else:
         tk.Button(prowin, text="下一组", command=NextArray).grid(row=i, column=0, padx=10, pady=10) 
 
-    #if array_no > 1: # FIXME
+    #if Array_no > 1: # FIXME
     #    tk.Button(prowin, text="上一组").grid(row=i, column=1, padx=10, pady=10)  
     
     prowin.protocol("WM_DELETE_WINDOW",WinWarning)   
@@ -578,7 +578,7 @@ def ReExecuteProgram():
     global Problem_Num
     global Every_Arry_Num
     global Arry_Num
-    global array_no
+    global Array_no
     global Answer_Tuple_List
     global Answer_Dic
 
@@ -597,7 +597,7 @@ def ReExecuteProgram():
     
     Arry_Num    = Problem_Num//Every_Arry_Num if Problem_Num%Every_Arry_Num==0 else\
                   Problem_Num//Every_Arry_Num + 1
-    array_no = 1
+    Array_no = 1
     Answer_Tuple_List = []
     Answer_Dic = {0:"Right", 1:"Wrong", 3:"Empty" }
 
@@ -651,29 +651,84 @@ def MathScoreBoard(answer_list):
     tk.Label(score_win, text=empty_text,font=("华文行楷",20), fg="blue").pack()
     
     def ListWrongProb(list_wrong):
-        lbox = tk.Tk()
-        lbox.title("错误题目")
-        #lbox.geometry("200x600")
-        lb = tk.Listbox(lbox, width=40)
-        lb.pack()
+        lbl = tk.Tk()
+        
+        #lbl.geometry("200x400")
+        lbl.title("答案")
+        #sb = tk.Scrollbar(lbl)
+        #sb.pack(side="right", fill="y")
+        #lb = tk.Listbox(lbl,yscrollcommand=sb.set, width=40, height=100)
+        #lb.pack(side="left", fill="both") 
+        #sb.config(command=lb.yview)
+        lfm = tk.LabelFrame(lbl)
+        lfm.grid(row=0, column=0,columnspan=2, padx=10, pady=10)
 
-
+        txt = tk.Text(lfm)
+        txt.pack()
+            
+        
         for prob in answer_list:
+            tuple0_prob_stem   = prob[0].replace("=", '')
+            tuple1_equal_sig   = "="
+            tuple4_right_value = "答案: " + str(prob[1])
             if prob[3] == "Wrong":
-                sig = " 做错： 正确值 %1d" % prob[1]  
+                tuple2_child_value = str(prob[2])
+                tuple3_wrong_right = "✘"
+                #sig = "%-5s => %-4d" %("✘",prob[1])  
+                #child_value = prob[2]
             elif prob[3] == "Empty":
-                sig = " 没做： 正确值 %1d" % prob[1]
+                tuple2_child_value = "?"
+                tuple3_wrong_right = "没做"
+                #sig = "%-5s => %-4d" %("Empty ",prob[1])
+                #child_value = " "
             elif prob[3] == "Right":
-                sig = " 正确： ✔"
-
-            if list_wrong==1: 
+                tuple2_child_value = str(prob[2]) 
+                tuple3_wrong_right = "✔"
+                tuple4_right_value = " "
+                #sig = "%-5s" % "✔"
+                #child_value = prob[2]
+            
+            
+            
+            if list_wrong==1:
                 if prob[3] in ["Wrong", "Empty"]:
-                    insert_text = prob[0] + str(prob[2]) + sig
-                    lb.insert("end", insert_text)
+                    l0 = tk.Label(txt, text=tuple0_prob_stem  , width=10,bg="white")
+                    l1 = tk.Label(txt, text=tuple1_equal_sig  , width=10)
+                    l2 = tk.Label(txt, text=tuple2_child_value, width=10)
+                    l3 = tk.Label(txt, text=tuple3_wrong_right, width=10)
+                    l4 = tk.Label(txt, text=tuple4_right_value, width=10)
+                    txt.window_create("insert", window=l0)
+                    txt.window_create("insert", window=l1)
+                    txt.window_create("insert", window=l2)
+                    txt.window_create("insert", window=l3)
+                    txt.window_create("insert", window=l4)
+                    txt.insert("end", "\n")
             else:
-                insert_text = prob[0] + str(prob[2]) + sig
-                lb.insert("end", insert_text)
-        lbox.mainloop()
+                l0 = tk.Label(txt, text=tuple0_prob_stem  , width=10)
+                l1 = tk.Label(txt, text=tuple1_equal_sig  , width=10)
+                l2 = tk.Label(txt, text=tuple2_child_value, width=10)
+                l3 = tk.Label(txt, text=tuple3_wrong_right, width=10)
+                l4 = tk.Label(txt, text=tuple4_right_value, width=10)
+                txt.window_create("insert", window=l0)
+                txt.window_create("insert", window=l1)
+                txt.window_create("insert", window=l2)
+                txt.window_create("insert", window=l3)
+                txt.window_create("end", window=l4)
+                #txt.insert("insert", "\n")
+       
+        # 设置滚动条
+        scl = tk.Scrollbar(lbl)
+        scl['command'] = txt.yview
+        scl.grid(row=0, column=3, sticky="s" + "n")
+        txt.config(yscrollcommand = scl.set)
+
+        # 设置保存结果的按钮
+        #def ExistGui:
+        #    pass
+        tk.Button(lbl, text="保存此结果",width=10).grid(row=1, column=0)
+        tk.Button(lbl, text="退出此界面",width=10).grid(row=1, column=1)
+
+        lbl.mainloop()
 
 
     def ExitProgram(): 
@@ -694,46 +749,50 @@ def MathScoreBoard(answer_list):
 
 
 
-################################# Main #########################################
+############################################ Main #################################################
 if __name__ == "__main__":
     
-    #********************* Const Parameter *********************#
-    WELCOME_GIF = "welcome.gif"  # 欢迎界面
-    SCORE_000   = "fen_0.gif"    # 评判界面：得了100分
-    SCORE_100   = "fen_100.gif"  # 评判界面：得了 0 分
-    WAIT_TIME   = 2000           # 界面的持续时间： 2000 毫秒
-    #***********************************************************#
+    #********************************** Const Parameter ******************************************#
+    WELCOME_GIF     = "welcome.gif"     # 欢迎界面
+    SCORE_000       = "fen_0.gif"       # 评判界面：得了100分
+    SCORE_100       = "fen_100.gif"     # 评判界面：得了 0 分
+
+    WAIT_TIME       = 1000              # 界面的持续时间： 2000 毫秒
+    Every_Arry_Num  = 10                # GUI的题目十个分成一组
+    #*********************************************************************************************#
    
-    #******************* Global Variable ***********************#
-    Ret_math_range  = 0 
-    Ret_math_type   = 0
-    Ret_opera_num   = 0
-    Ret_math_num    = 0
-    #***********************************************************#
+    #************************************* Global Variable ***************************************#
+    Array_no        = 1     # 题目分组之后，这个变量代表当前的组的组号，初始值是1
+    Ret_math_range  = 0     # 数学题的范围：比如是30以内的数（的加减法）
+    Ret_math_type   = 0     # 数学的类型：加减乘除，以及混合
+    Ret_opera_num   = 0     # 一道题的操作数有几个
+    Ret_math_num    = 0     # 数学题的数量
 
+    Problem_List    = []    # 产生数学集合而成的列表，列表的元素是元组，
+                            # 其形式类似这样(有连个元素)：（“ op1 + op2 ”, 正确结果值）
+    Answer_Tuple_List = []  # 孩子的回答也以元组的形式存在列表Answer_Tuple_List，
+                            # 其形式类似这样(有四个元素)：
+                            # (“ op1 + op2 ”， 正确结果值，孩子回答值，回答正确性Right/Wrong/Empty）
 
+    #*********************************************************************************************#
     rd.seed(int(sys.argv[1]))
-    WELCOM_TIME = 2
-    
+   
+
     WelcomeAndPraise(welcome_flag=1, score=0)
-    MathTypeChose()
+    MathTypeChose()  ## give the value : 
 
     #Ret_math_range  = 100
     #Ret_math_type   = 5
     #Ret_opera_num   = 2
     #Ret_math_num    = 8
 
-    Problem_List = []
-    Problem_List = GenerateAllProblem(Ret_math_num)
+    Problem_List = GenerateAllProblem(Ret_math_num) # 通过GUI界面获取的数据，在这个函数中生成题目
+                                                    # 生成的题目放入的Problem_List中
     
     Problem_Num = len(Problem_List)
-    Every_Arry_Num = 10
-    
     Arry_Num    = Problem_Num//Every_Arry_Num if Problem_Num%Every_Arry_Num==0 else\
                   Problem_Num//Every_Arry_Num + 1
-    array_no = 1
-    Answer_Tuple_List = []
-    Answer_Dic = {0:"Right", 1:"Wrong", 3:"Empty" }
+    #Array_no = 1
 
     ProblemWin(Problem_List)
     
