@@ -6,6 +6,7 @@ import random as rd
 import time
 import threading
 import sys
+import os
 
 #********************************************
 # Function: WelcomeAndPraise()
@@ -31,9 +32,9 @@ def WelcomeAndPraise(welcome_flag, score):
         elif score == 0:
             gif_file = tk.PhotoImage(file=SCORE_000)
         elif score >= 60: ## FIXME 及格，继续努力
-            pass 
+            gif_file = tk.PhotoImage(file=SCORE_060)
         else:             ## FIXME 不及格，要更加努力才行啊！
-            pass
+            gif_file = tk.PhotoImage(file=SCORE_059)
     else:
         praw.title('Maths Welcome You !')
         gif_file = tk.PhotoImage(file=WELCOME_GIF)
@@ -637,12 +638,12 @@ def MathScoreBoard(answer_list):
 
     ## 如果得了满分或者0分，显示表扬界面
     #score_cnt = 100
-    if  score_cnt in [0,100]:
+    if 0 <= score_cnt <= 100:
         WelcomeAndPraise(0,score_cnt)
 
     ## 弹出窗口显示得分
     score_win = tk.Tk()
-    score_win.title("积分板")
+    score_win.title("测试结果板")
     score_win.geometry("200x400")
 
     tk.Label(score_win, text=score_text,font=("华文行楷",20), fg="red" ).pack()
@@ -653,20 +654,15 @@ def MathScoreBoard(answer_list):
     def ListWrongProb(list_wrong):
         lbl = tk.Tk()
         
-        #lbl.geometry("200x400")
+        #lbl.geometry("400x800")
         lbl.title("答案")
-        #sb = tk.Scrollbar(lbl)
-        #sb.pack(side="right", fill="y")
-        #lb = tk.Listbox(lbl,yscrollcommand=sb.set, width=40, height=100)
-        #lb.pack(side="left", fill="both") 
-        #sb.config(command=lb.yview)
         lfm = tk.LabelFrame(lbl)
         lfm.grid(row=0, column=0,columnspan=2, padx=10, pady=10)
 
-        txt = tk.Text(lfm)
+        txt = tk.Text(lfm, font=("Helvetica", 14), height=25)
         txt.pack()
             
-        
+        result_list = []
         for prob in answer_list:
             tuple0_prob_stem   = prob[0].replace("=", '')
             tuple1_equal_sig   = "="
@@ -674,47 +670,44 @@ def MathScoreBoard(answer_list):
             if prob[3] == "Wrong":
                 tuple2_child_value = str(prob[2])
                 tuple3_wrong_right = "✘"
-                #sig = "%-5s => %-4d" %("✘",prob[1])  
-                #child_value = prob[2]
             elif prob[3] == "Empty":
                 tuple2_child_value = "?"
                 tuple3_wrong_right = "没做"
-                #sig = "%-5s => %-4d" %("Empty ",prob[1])
-                #child_value = " "
             elif prob[3] == "Right":
                 tuple2_child_value = str(prob[2]) 
                 tuple3_wrong_right = "✔"
                 tuple4_right_value = " "
-                #sig = "%-5s" % "✔"
-                #child_value = prob[2]
-            
+
+            answer_tuple = (tuple0_prob_stem, tuple1_equal_sig, tuple2_child_value, tuple3_wrong_right, tuple4_right_value)
+            result_list.append(answer_tuple)
+
             
             
             if list_wrong==1:
                 if prob[3] in ["Wrong", "Empty"]:
-                    l0 = tk.Label(txt, text=tuple0_prob_stem  , width=10,bg="white")
-                    l1 = tk.Label(txt, text=tuple1_equal_sig  , width=10)
-                    l2 = tk.Label(txt, text=tuple2_child_value, width=10)
-                    l3 = tk.Label(txt, text=tuple3_wrong_right, width=10)
-                    l4 = tk.Label(txt, text=tuple4_right_value, width=10)
+                    l0 = tk.Label(txt, text=tuple0_prob_stem  , font=("Helvetica", 14, "bold"), fg="black", bg="white", justify="left"  , width=16)
+                    l1 = tk.Label(txt, text=tuple1_equal_sig  , font=("Helvetica", 14, "bold"), fg="black", bg="white", justify="left"  , width=3 )
+                    l2 = tk.Label(txt, text=tuple2_child_value, font=("Helvetica", 14, "bold"), fg="black", bg="white", justify="left"  , width=8)
+                    l3 = tk.Label(txt, text=tuple3_wrong_right, font=("Helvetica", 14, "bold"), fg="red"  , bg="white", justify="left"  , width=8)
+                    l4 = tk.Label(txt, text=tuple4_right_value, font=("Helvetica", 14, "bold"), fg="green", bg="white", justify="left"  , width=8)
                     txt.window_create("insert", window=l0)
                     txt.window_create("insert", window=l1)
                     txt.window_create("insert", window=l2)
                     txt.window_create("insert", window=l3)
                     txt.window_create("insert", window=l4)
-                    txt.insert("end", "\n")
+                    txt.insert("insert", "\n")
             else:
-                l0 = tk.Label(txt, text=tuple0_prob_stem  , width=10)
-                l1 = tk.Label(txt, text=tuple1_equal_sig  , width=10)
-                l2 = tk.Label(txt, text=tuple2_child_value, width=10)
-                l3 = tk.Label(txt, text=tuple3_wrong_right, width=10)
-                l4 = tk.Label(txt, text=tuple4_right_value, width=10)
+                l0 = tk.Label(txt, text=tuple0_prob_stem  , font=("Helvetica", 14, "bold"), fg="black", bg="white", justify="left"  , width=16)
+                l1 = tk.Label(txt, text=tuple1_equal_sig  , font=("Helvetica", 14, "bold"), fg="black", bg="white", justify="left"  , width=3 )
+                l2 = tk.Label(txt, text=tuple2_child_value, font=("Helvetica", 14, "bold"), fg="black", bg="white", justify="left"  , width=8)
+                l3 = tk.Label(txt, text=tuple3_wrong_right, font=("Helvetica", 14, "bold"), fg="red"  , bg="white", justify="left"  , width=8)
+                l4 = tk.Label(txt, text=tuple4_right_value, font=("Helvetica", 14, "bold"), fg="green", bg="white", justify="left"  , width=8)
                 txt.window_create("insert", window=l0)
                 txt.window_create("insert", window=l1)
                 txt.window_create("insert", window=l2)
                 txt.window_create("insert", window=l3)
-                txt.window_create("end", window=l4)
-                #txt.insert("insert", "\n")
+                txt.window_create("insert", window=l4)
+                txt.insert("insert", "\n")
        
         # 设置滚动条
         scl = tk.Scrollbar(lbl)
@@ -723,10 +716,18 @@ def MathScoreBoard(answer_list):
         txt.config(yscrollcommand = scl.set)
 
         # 设置保存结果的按钮
-        #def ExistGui:
-        #    pass
-        tk.Button(lbl, text="保存此结果",width=10).grid(row=1, column=0)
-        tk.Button(lbl, text="退出此界面",width=10).grid(row=1, column=1)
+        def SaveAnswerReslut():
+            now_time = time.strftime("%m%d-%H%M", time.localtime())
+            gen_file = "训练结果"  + now_time + ".txt"
+            f = open(gen_file, "w")
+            for aw in result_list:
+                write_str = "%-16s %-1s %-3s %-2s %-1s" % aw
+                f.write(write_str)
+            f.close()
+            tm.showinfo("文件信息", "文件： \"" + gen_file + "\"已成功生成!\n放在: " + os.getcwd() + " 中")
+                
+        tk.Button(lbl, text="保存此结果", font=("time", 14), bg="black", fg="yellow", command=SaveAnswerReslut, width=10).grid(row=1, column=0, pady=10)
+        tk.Button(lbl, text="退出此界面", font=("time", 14), bg="black", fg="yellow", command=lbl.destroy     , width=10).grid(row=1, column=1, pady=10)
 
         lbl.mainloop()
 
@@ -754,8 +755,10 @@ if __name__ == "__main__":
     
     #********************************** Const Parameter ******************************************#
     WELCOME_GIF     = "welcome.gif"     # 欢迎界面
-    SCORE_000       = "fen_0.gif"       # 评判界面：得了100分
-    SCORE_100       = "fen_100.gif"     # 评判界面：得了 0 分
+    SCORE_000       = "fen_000.gif"     # 评判界面：得了0分
+    SCORE_100       = "fen_100.gif"     # 评判界面：得了100分
+    SCORE_060       = "fen_060.gif"     # 评判界面：得了60分
+    SCORE_059       = "fen_059.gif"     # 评判界面：得了59分
 
     WAIT_TIME       = 1000              # 界面的持续时间： 2000 毫秒
     Every_Arry_Num  = 10                # GUI的题目十个分成一组
