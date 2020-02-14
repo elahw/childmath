@@ -17,29 +17,38 @@ def WelcomeAndPraise(welcome_flag, score):
     praw = tk.Tk()
     praw.title("评语板")
 
-    sw = praw.winfo_screenwidth()
-    sh = praw.winfo_screenheight()
-    ww = praw.winfo_reqwidth()
-    hh = praw.winfo_reqheight()
-    x = (sw - ww)/2
-    y = (sh - hh)/2
-    praw.geometry("+%d+%d"%(x,y))
     
     if welcome_flag==0:
         praw.title("评语板")
         if score == 100:
             gif_file = tk.PhotoImage(file=SCORE_100)
+            (ww, hh) = (305 , 330)
         elif score == 0:
             gif_file = tk.PhotoImage(file=SCORE_000)
+            (ww, hh) = (495 , 250)
         elif score >= 60: ## FIXME 及格，继续努力
             gif_file = tk.PhotoImage(file=SCORE_060)
+            (ww, hh) = (870 , 530)
         else:             ## FIXME 不及格，要更加努力才行啊！
             gif_file = tk.PhotoImage(file=SCORE_059)
+            (ww, hh) = (720 , 450)
     else:
         praw.title('Maths Welcome You !')
         gif_file = tk.PhotoImage(file=WELCOME_GIF)
+        (ww, hh) = (1200 , 700)
 
     tk.Label(praw, image=gif_file).pack()
+
+
+
+    sw = praw.winfo_screenwidth()
+    sh = praw.winfo_screenheight()
+    #ww = praw.winfo_reqwidth()
+    #hh = praw.winfo_reqheight()
+    x = (sw - ww)/2
+    y = (sh - hh)/2
+    praw.geometry("+%d+%d"%(x,y))
+
 
     praw.after(WAIT_TIME, praw.destroy)
     praw.mainloop()
@@ -55,87 +64,78 @@ def MathTypeChose():
     master.title('Maths Type')
     sw = master.winfo_screenwidth()
     sh = master.winfo_screenheight()
-    ww = 500
-    hh = 500
+    ww = 475
+    hh = 300
     x = (sw - ww)/2
     y = (sh - hh)/2
     master.geometry("%dx%d+%d+%d"%(ww,hh, x,y))
-    #master.geometry("%d+%d"%(x,y))
     
       
-    tk.Label(master, text="请选择题型",font=("华文行楷",20), fg="red",justify="center").grid(row=0,column=1,columnspan=4,rowspan=3) 
-
-    #tk.Label(master, text="计算大小",font=("华文行楷"), fg="black").grid(row=3,column=0,sticky="w") 
-    #tk.LabelFrame(master, text="计算大小", padx=5, pady=5).grid(row=0,column=0)
-
+    tk.Label(master, text="请选择题型",font=("华文行楷",16), fg="Purple",justify="center").grid(row=0,column=0,columnspan=6,rowspan=3) 
+    
+    group_ft = ("宋体", 13, "bold")
+    group_fg = "blue"
+    item_ft  = ("宋体", 13)
+    item_fg  = "black"
     ############################ group 1 ##########################################
-    group1 = tk.LabelFrame(master, text="计算大小", fg="blue", labelanchor='n')
-    group1.grid(row=3,column=0, padx=10,pady=10)
+    group1 = tk.LabelFrame(master, text="计算大小",font=group_ft, fg=group_fg, labelanchor='n')
+    group1.grid(row=3,column=0, padx=5,pady=5)
 
     num_range = tk.IntVar()
 
-    tk.Radiobutton(group1,text="30",  variable=num_range, value=30 ).grid(row=4, column=0, sticky="w")
-    tk.Radiobutton(group1,text="50",  variable=num_range, value=50 ).grid(row=5, column=0, sticky="w")
-    tk.Radiobutton(group1,text="100", variable=num_range, value=100).grid(row=6, column=0, sticky="w")
-    tk.Radiobutton(group1,text="200", variable=num_range, value=200).grid(row=7, column=0, sticky="w")
+    tk.Radiobutton(group1,text="30" , font=item_ft, fg=item_fg, variable=num_range, value=30 ).grid(row=4, column=0, sticky="w")
+    tk.Radiobutton(group1,text="50" , font=item_ft, fg=item_fg, variable=num_range, value=50 ).grid(row=5, column=0, sticky="w")
+    tk.Radiobutton(group1,text="100", font=item_ft, fg=item_fg, variable=num_range, value=100).grid(row=6, column=0, sticky="w")
+    tk.Radiobutton(group1,text="200", font=item_ft, fg=item_fg, variable=num_range, value=200).grid(row=7, column=0, sticky="w")
 
-    ent0 = tk.Label(group1, text="自定义：",font=("华文行楷",8), fg="black")
+    ent0 = tk.Label(group1, text="自定义：", font=("华文行楷",12), fg=item_fg)
     ent0.grid(row=8,column=0, sticky="E")
 
-    en0 = tk.Entry(group1,width=4)
-    en0.grid(row=8, column=1,sticky="w")
+    en0 = tk.Entry(group1, width=4, font=("华文行楷",12))
+    en0.grid(row=8, column=1,sticky="w",padx=5)
 
     ## 得到数学题的运算范围
     #Ret_math_range = num_range.get() if en0.get()=="" else int(en0.get())
 
     ############################ group 2 ##########################################
-    group2 = tk.LabelFrame(master, text="计算类型",fg="blue",  labelanchor='n')
-    group2.grid(row=3,column=1, padx=10,pady=10)
+    group2 = tk.LabelFrame(master, text="计算类型",font=group_ft, fg=group_fg,  labelanchor='n')
+    group2.grid(row=3,column=1, padx=5,pady=5)
 
     strs = tk.IntVar()
-    tk.Radiobutton(group2,text="加",   variable=strs, value=1).grid(row=4, column=3, sticky="w")
-    tk.Radiobutton(group2,text="减",   variable=strs, value=2).grid(row=5, column=3, sticky="w")
-    tk.Radiobutton(group2,text="乘",   variable=strs, value=3).grid(row=6, column=3, sticky="w")
-    tk.Radiobutton(group2,text="除",   variable=strs, value=4).grid(row=7, column=3, sticky="w")
-    tk.Radiobutton(group2,text="混合", variable=strs, value=5).grid(row=8, column=3, sticky="w")
-
-    ## 得到数学提的运算类型
-    #Ret_math_type = strs.get()
+    tk.Radiobutton(group2,text="加"  ,font=item_ft, fg=item_fg, variable=strs, value=1).grid(row=4, column=3, columnspan=2, sticky="w")
+    tk.Radiobutton(group2,text="减"  ,font=item_ft, fg=item_fg, variable=strs, value=2).grid(row=5, column=3, sticky="w")
+    tk.Radiobutton(group2,text="乘"  ,font=item_ft, fg=item_fg, variable=strs, value=3).grid(row=6, column=3, sticky="w")
+    tk.Radiobutton(group2,text="除"  ,font=item_ft, fg=item_fg, variable=strs, value=4).grid(row=7, column=3, sticky="w")
+    tk.Radiobutton(group2,text="混合",font=item_ft, fg=item_fg, variable=strs, value=5).grid(row=8, column=3, sticky="w")
 
      
     ############################ group 3 ##########################################
-    group3 = tk.LabelFrame(master, text="多项运算",fg="blue", labelanchor='n')
-    group3.grid(row=3,column=2, padx=10,pady=10)
+    group3 = tk.LabelFrame(master, text="多项运算",font=group_ft, fg=group_fg, labelanchor='n')
+    group3.grid(row=3,column=2, padx=5,pady=5)
 
-    yun_num = tk.IntVar() 
-    tk.Radiobutton(group3, text="两项", variable=yun_num, value=2).grid(row=4, column=4, sticky="w")
-    tk.Radiobutton(group3, text="三项", variable=yun_num, value=3).grid(row=5, column=4, sticky="w")
-    #tk.Radiobutton(group3, text="四项", variable=yun_num, value=4).grid(row=6, column=4, sticky="w")
-    tk.Label(group3, text=" ").grid(row=6, column=4, sticky="w")
-    tk.Label(group3, text=" ").grid(row=7, column=4, sticky="w")
-    tk.Label(group3, text=" ").grid(row=8, column=4, sticky="w")
-    ## 一道题有几个数参与运算
-    #Ret_opera_num = yun_num.get()
-
+    yun_num = tk.IntVar()
+    tk.Radiobutton(group3, text="两项", font=item_ft, fg=item_fg, variable=yun_num, value=2).grid(row=4, column=4, sticky="w")
+    tk.Radiobutton(group3, text="三项", font=item_ft, fg=item_fg, variable=yun_num, value=3).grid(row=5, column=4, sticky="w")
+    tk.Label(group3, text=" ", font=item_ft, fg=item_fg).grid(row=6, column=4, sticky="w")
+    tk.Label(group3, text=" ", font=item_ft, fg=item_fg).grid(row=7, column=4, sticky="w")
+    tk.Label(group3, text=" ", font=item_ft, fg=item_fg).grid(row=8, column=4, sticky="w")
      
+
     ############################ group 4 ##########################################
-    group4 = tk.LabelFrame(master, text="题目数量",fg="blue", labelanchor='n')
-    group4.grid(row=3,column=3, padx=10,pady=10)
+    group4 = tk.LabelFrame(master, text="题目数量", font=group_ft, fg=group_fg, labelanchor='n')
+    group4.grid(row=3,column=3, padx=5,pady=5)
 
     math_num = tk.IntVar()
-    tk.Radiobutton(group4, text="200", variable=math_num, value=200).grid(row=4, column=0, sticky="w")
-    tk.Radiobutton(group4, text="100", variable=math_num, value=100).grid(row=5, column=0, sticky="w")
-    tk.Radiobutton(group4, text="50",  variable=math_num, value=50).grid(row=6, column=0, sticky="w")
-    tk.Radiobutton(group4, text="30",  variable=math_num, value=30).grid(row=7, column=0, sticky="w")
+    tk.Radiobutton(group4, text="200", font=item_ft, fg=item_fg, variable=math_num, value=200).grid(row=4, column=0, sticky="w")
+    tk.Radiobutton(group4, text="100", font=item_ft, fg=item_fg, variable=math_num, value=100).grid(row=5, column=0, sticky="w")
+    tk.Radiobutton(group4, text="50" , font=item_ft, fg=item_fg, variable=math_num, value=50).grid(row=6, column=0, sticky="w")
+    tk.Radiobutton(group4, text="30" , font=item_ft, fg=item_fg, variable=math_num, value=30).grid(row=7, column=0, sticky="w")
 
-    ent1 = tk.Label(group4, text="自定义：",font=("华文行楷",8), fg="black")
+    ent1 = tk.Label(group4, text="自定义：",font=("华文行楷",12), fg=item_fg)
     ent1.grid(row=8,column=0, sticky="E")
 
-    en1 = tk.Entry(group4,width=4)
-    en1.grid(row=8, column=1, padx=0,sticky="w")
-    
-    # 得到需要计算的题目的数量
-    #Ret_math_num =  math_num.get() if en1.get()=='' else en1.get()
+    en1 = tk.Entry(group4, font=("华文行楷",12), width=4)
+    en1.grid(row=8, column=1, padx=5, sticky="w")
     
 
     def SubmitType():
@@ -192,7 +192,6 @@ def MathTypeChose():
                 txt = "请设置题目数量"
                 tm.showwarning("注意",txt)
                 return 0
-        #print(Ret_math_num)
         master.destroy()
 
 
@@ -200,8 +199,8 @@ def MathTypeChose():
         master.destroy()
         sys.exit(0) 
 
-    tk.Button(master, text="题型已经选好", command=SubmitType, font=("华文行楷"), fg="blue",bg="yellow").grid(row=9, column=1, sticky="w")
-    tk.Button(master, text="退出数学训练", command=ExitGui   , font=("华文行楷"), fg="blue",bg="yellow").grid(row=9, column=3, sticky="w")
+    tk.Button(master, text="选好", command=SubmitType, font=("华文行楷", 12), fg="blue",bg="yellow", width=6).grid(row=9, column=1, sticky="w")
+    tk.Button(master, text="退出", command=ExitGui   , font=("华文行楷", 12), fg="blue",bg="yellow", width=6).grid(row=9, column=2, sticky="E")
 
     master.protocol("WM_DELETE_WINDOW",ExitGui) ## 点击GUI右上角的x，会退出程序，不再往下执行
     master.mainloop()
@@ -492,7 +491,12 @@ def ProblemWin(problem_list):
 
     win_title = "第%1d组 共%1d组" %(Array_no, Arry_Num) 
     prowin.title(win_title)
-    prowin.geometry("400x550")
+
+    sw       = prowin.winfo_screenwidth()
+    sh       = prowin.winfo_screenheight()
+    (ww, hh) = (350, 670)
+    (x, y)   = ((sw - ww)/2,(sh - hh)/2) 
+    prowin.geometry("%dx%d+%d+%d"%(ww,hh,x,y))
     
     if Array_no < Arry_Num:
         arry_problem_list = problem_list[(Array_no-1)*10:Array_no*10 ]
@@ -505,8 +509,11 @@ def ProblemWin(problem_list):
     for sing_prob in arry_problem_list:
         
         prob_txt = sing_prob[0] 
-        tk.Label(prowin, text =prob_txt, font=("华文行楷",15), fg="blue" ).grid(row=i, column=0, sticky="E",padx=10, pady=10)
-        enty = tk.Entry(prowin, width=10)
+
+        label_entry_ft = ("time", 20)
+        label_entry_fg = "blue"
+        tk.Label(prowin, text =prob_txt, font=label_entry_ft, fg=label_entry_fg, width=10).grid(row=i, column=0, sticky="E",padx=10, pady=10)
+        enty = tk.Entry(prowin,font=label_entry_ft, fg=label_entry_fg, width=6)
         enty.grid(row=i, column=1, sticky="W",padx=10, pady=10)
 
         entry_list.append(enty)
@@ -516,7 +523,6 @@ def ProblemWin(problem_list):
         global Array_no
         global Answer_Tuple_List
         
-        ## 
         for en_no in range(len(entry_list)):
             try:
                 if entry_list[en_no].get()=="":
@@ -550,18 +556,17 @@ def ProblemWin(problem_list):
             prowin.destroy()
             sys.exit(0)
 
-
+    
     if Array_no == Arry_Num:
-        tk.Button(prowin, text="我要交卷", command=NextArray).grid(row=i, column=0, padx=10, pady=10) 
+        tk.Button(prowin, text="我要交卷",font=("time", 20, "bold"), fg="black", bg="yellow", command=NextArray).grid(row=i, column=0, columnspan=32, padx=10, pady=10) 
     else:
-        tk.Button(prowin, text="下一组", command=NextArray).grid(row=i, column=0, padx=10, pady=10) 
+        tk.Button(prowin, text="下一组",  font=("time", 20, "bold"), fg="black", bg="yellow", command=NextArray).grid(row=i, column=0, columnspan=32, padx=10, pady=10) 
 
     #if Array_no > 1: # FIXME
     #    tk.Button(prowin, text="上一组").grid(row=i, column=1, padx=10, pady=10)  
     
     prowin.protocol("WM_DELETE_WINDOW",WinWarning)   
     prowin.mainloop()
-
 
 
 #********************************************
@@ -630,10 +635,15 @@ def MathScoreBoard(answer_list):
     
     score_cnt = int(right_cnt / len(answer_list) * 100)
     
-    wrong_text = "错误数量：%1d" %wrong_cnt
-    rihgt_text = "正确数量：%1d" %right_cnt
-    empty_text = "没做数量：%1d" %empty_cnt
-    score_text = "本次得分：%1d" %score_cnt
+    tx = "{0:<5}{1:{2}<3}"
+    wrong_text = tx.format("错误数量:",wrong_cnt," ")
+    rihgt_text = tx.format("正确数量:",right_cnt," ")
+    empty_text = tx.format("没做数量:",empty_cnt," ")
+    score_text = tx.format("本次得分:",score_cnt," ")
+    #wrong_text = "错误数量：%-3d" %wrong_cnt
+    #rihgt_text = "正确数量：%-3d" %right_cnt
+    #empty_text = "没做数量：%-3d" %empty_cnt
+    #score_text = "本次得分：%-3d" %score_cnt
     
 
     ## 如果得了满分或者0分，显示表扬界面
@@ -644,18 +654,28 @@ def MathScoreBoard(answer_list):
     ## 弹出窗口显示得分
     score_win = tk.Tk()
     score_win.title("测试结果板")
-    score_win.geometry("200x400")
-
-    tk.Label(score_win, text=score_text,font=("华文行楷",20), fg="red" ).pack()
-    tk.Label(score_win, text=rihgt_text,font=("华文行楷",20), fg="blue").pack()
-    tk.Label(score_win, text=wrong_text,font=("华文行楷",20), fg="red" ).pack()
-    tk.Label(score_win, text=empty_text,font=("华文行楷",20), fg="blue").pack()
+    sw       = score_win.winfo_screenwidth()
+    sh       = score_win.winfo_screenheight()
+    (ww, hh) = (350, 540)
+    (x, y)   = ((sw - ww)/2,(sh - hh)/2)  
+    score_win.geometry("%dx%d+%d+%d"%(ww,hh,x,y))
+    
+    score_lfm = tk.LabelFrame(score_win)
+    score_lfm.pack()
+    tk.Label(score_lfm, text=score_text,font=("PakTypeNaqsh",30,"bold"), fg="red").pack()
+    tk.Label(score_lfm, text=wrong_text,font=("华文行楷",20), fg="blue").pack()
+    tk.Label(score_lfm, text=rihgt_text,font=("华文行楷",20), fg="blue").pack()
+    tk.Label(score_lfm, text=empty_text,font=("华文行楷",20), fg="blue").pack()
     
     def ListWrongProb(list_wrong):
         lbl = tk.Tk()
-        
-        #lbl.geometry("400x800")
-        lbl.title("答案")
+        sw       = lbl.winfo_screenwidth()
+        sh       = lbl.winfo_screenheight()
+        (ww, hh) = (841, 721)
+        (x, y)   = ((sw - ww)/2,(sh - hh)/2) 
+        lbl.geometry("%dx%d+%d+%d"%(ww,hh,x,y))
+       
+        lbl.title("ANSWER")
         lfm = tk.LabelFrame(lbl)
         lfm.grid(row=0, column=0,columnspan=2, padx=10, pady=10)
 
@@ -696,6 +716,7 @@ def MathScoreBoard(answer_list):
                     txt.window_create("insert", window=l3)
                     txt.window_create("insert", window=l4)
                     txt.insert("insert", "\n")
+                    lf_name = "错误题目及参考答案"
             else:
                 l0 = tk.Label(txt, text=tuple0_prob_stem  , font=("Helvetica", 14, "bold"), fg="black", bg="white", justify="left"  , width=16)
                 l1 = tk.Label(txt, text=tuple1_equal_sig  , font=("Helvetica", 14, "bold"), fg="black", bg="white", justify="left"  , width=3 )
@@ -708,7 +729,12 @@ def MathScoreBoard(answer_list):
                 txt.window_create("insert", window=l3)
                 txt.window_create("insert", window=l4)
                 txt.insert("insert", "\n")
-       
+                lf_name = "全部题目及参考答案"
+      
+
+        # 设置参考答案的弹框窗口副名称：
+        lfm.config(text=lf_name, labelanchor="n",font=("宋体", 15), fg="blue",padx=5,pady=5)
+
         # 设置滚动条
         scl = tk.Scrollbar(lbl)
         scl['command'] = txt.yview
@@ -740,10 +766,10 @@ def MathScoreBoard(answer_list):
         score_win.destroy()
         ReExecuteProgram()
 
-    tk.Button(score_win, text="查看错误题目", font=("华文行楷",20), fg="black",bg="yellow", command=lambda:ListWrongProb(1)).pack()
-    tk.Button(score_win, text="查看所有题目", font=("华文行楷",20), fg="black",bg="blue"  , command=lambda:ListWrongProb(0)).pack()
-    tk.Button(score_win, text="再做一次训练", font=("华文行楷",20), fg="black",bg="green"  ,command=ReExec).pack()
-    tk.Button(score_win, text="退出数学训练", font=("华文行楷",20), fg="black",bg="blue"  ,command=ExitProgram).pack()
+    tk.Button(score_win, text="查看错误题目", font=("华文行楷",20), fg="black",bg="yellow", command=lambda:ListWrongProb(1) ).pack(padx=10,pady=10)
+    tk.Button(score_win, text="查看所有题目", font=("华文行楷",20), fg="black",bg="pink"  , command=lambda:ListWrongProb(0) ).pack(padx=10,pady=10)
+    tk.Button(score_win, text="再做一次训练", font=("华文行楷",20), fg="black",bg="green" , command=ReExec                  ).pack(padx=10,pady=10)
+    tk.Button(score_win, text="退出数学训练", font=("华文行楷",20), fg="black",bg="blue"  , command=ExitProgram             ).pack(padx=10,pady=10)
     
     score_win.mainloop()
 
