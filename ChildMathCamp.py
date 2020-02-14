@@ -804,7 +804,7 @@ if __name__ == "__main__":
                             # (“ op1 + op2 ”， 正确结果值，孩子回答值，回答正确性Right/Wrong/Empty）
 
     #*********************************************************************************************#
-    rd.seed(int(sys.argv[1]))
+    #rd.seed(int(sys.argv[1]))
    
 
     WelcomeAndPraise(welcome_flag=1, score=0)
