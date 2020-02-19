@@ -502,7 +502,28 @@ def ProblemWin(problem_list):
     (ww, hh) = (350, 670)
     (x, y)   = ((sw - ww)/2,(sh - hh)/2) 
     prowin.geometry("%dx%d+%d+%d"%(ww,hh,x,y))
+
+    #### 计时器函数 ######
+    #clk = tk.Toplevel()
+    #clk_label = tk.Label(clk)
+    #clk_label.pack()
+    #
+    #def clock():
+    #    global Total_Cost_Time
+    #    Total_Cost_Time += 1
+    #    txt = "用时：" + str(Total_Cost_Time) + "秒"
+    #    clk_label.config(text=txt)
+    #    clk.after(1000, clock)
+
+    #clock()
+
+
+            
+
+
     
+
+
     if Array_no < Arry_Num:
         arry_problem_list = problem_list[(Array_no-1)*10:Array_no*10 ]
     else:
@@ -555,7 +576,7 @@ def ProblemWin(problem_list):
 
 
     def WinWarning():
-        mssg = "还未做完，要推出吗？"
+        mssg = "还未做完，要退出吗？"
         flag = tm.askokcancel("注意", mssg)
         if flag:  ## return True or False
             prowin.destroy()
@@ -612,7 +633,31 @@ def ReExecuteProgram():
     Answer_Tuple_List = []
     Answer_Dic = {0:"Right", 1:"Wrong", 3:"Empty" }
 
+    ### 计时器
+    clk = tk.Tk()
+    clk.title("计时器")
+    clk.geometry("+%d+%d"%(250, 100))
+    clk_label = tk.Label(clk, font=("宋体",20,"bold"),fg="red",width=13,height=2)
+    clk_label.pack()
+    
+    def clock():
+        global Total_Cost_Time
+        if Array_no <= Arry_Num:
+            Total_Cost_Time += 1
+            fen  = Total_Cost_Time//60
+            miao = Total_Cost_Time%60
+            txt  = "用时：%-1d分%-1d秒"%(fen, miao)
+            clk_label.config(text=txt)
+            clk.after(1000, clock)
+        else:
+            clk.destroy()
+
+    clock()
+
     ProblemWin(Problem_List)
+    
+    #clk.protocol("WM_DELETE_WINDOW",clk.withdraw())
+    clk.mainloop()
     
     #print (Answer_Tuple_List)
     time.sleep(1)
@@ -645,6 +690,11 @@ def MathScoreBoard(answer_list):
     rihgt_text = tx.format("正确数量:",right_cnt," ")
     empty_text = tx.format("没做数量:",empty_cnt," ")
     score_text = tx.format("本次得分:",score_cnt," ")
+
+    fen       = Total_Cost_Time//60
+    miao      = Total_Cost_Time%60
+    time_text = "%-1d分%-1d秒"%(fen, miao)
+    answe_time = tx.format("做题时间:",time_text," ")
     #wrong_text = "错误数量：%-3d" %wrong_cnt
     #rihgt_text = "正确数量：%-3d" %right_cnt
     #empty_text = "没做数量：%-3d" %empty_cnt
@@ -671,6 +721,7 @@ def MathScoreBoard(answer_list):
     tk.Label(score_lfm, text=wrong_text,font=("华文行楷",20), fg="blue").pack()
     tk.Label(score_lfm, text=rihgt_text,font=("华文行楷",20), fg="blue").pack()
     tk.Label(score_lfm, text=empty_text,font=("华文行楷",20), fg="blue").pack()
+    tk.Label(score_lfm, text=answe_time,font=("华文行楷",20), fg="blue").pack()
     
     def ListWrongProb(list_wrong):
         lbl = tk.Tk()
@@ -709,6 +760,7 @@ def MathScoreBoard(answer_list):
             
             
             if list_wrong==1:
+                lf_name = "错误题目及参考答案"
                 if prob[3] in ["Wrong", "Empty"]:
                     l0 = tk.Label(txt, text=tuple0_prob_stem  , font=("Helvetica", 14, "bold"), fg="black", bg="white", justify="left"  , width=16)
                     l1 = tk.Label(txt, text=tuple1_equal_sig  , font=("Helvetica", 14, "bold"), fg="black", bg="white", justify="left"  , width=3 )
@@ -721,8 +773,8 @@ def MathScoreBoard(answer_list):
                     txt.window_create("insert", window=l3)
                     txt.window_create("insert", window=l4)
                     txt.insert("insert", "\n")
-                    lf_name = "错误题目及参考答案"
             else:
+                lf_name = "全部题目及参考答案"
                 l0 = tk.Label(txt, text=tuple0_prob_stem  , font=("Helvetica", 14, "bold"), fg="black", bg="white", justify="left"  , width=16)
                 l1 = tk.Label(txt, text=tuple1_equal_sig  , font=("Helvetica", 14, "bold"), fg="black", bg="white", justify="left"  , width=3 )
                 l2 = tk.Label(txt, text=tuple2_child_value, font=("Helvetica", 14, "bold"), fg="black", bg="white", justify="left"  , width=8)
@@ -734,7 +786,6 @@ def MathScoreBoard(answer_list):
                 txt.window_create("insert", window=l3)
                 txt.window_create("insert", window=l4)
                 txt.insert("insert", "\n")
-                lf_name = "全部题目及参考答案"
       
 
         # 设置参考答案的弹框窗口副名称：
@@ -793,6 +844,7 @@ if __name__ == "__main__":
 
     WAIT_TIME       = 3300              # 界面的持续时间： 2000 毫秒
     Every_Arry_Num  = 10                # GUI的题目十个分成一组
+    Total_Cost_Time = 0
     #*********************************************************************************************#
    
     #************************************* Global Variable ***************************************#
@@ -828,7 +880,32 @@ if __name__ == "__main__":
                   Problem_Num//Every_Arry_Num + 1
     #Array_no = 1
 
+    
+    ### 计时器
+    clk = tk.Tk()
+    clk.title("计时器")
+    clk.geometry("+%d+%d"%(250, 100))
+    clk_label = tk.Label(clk, font=("宋体",20,"bold"),fg="red",width=13,height=2)
+    clk_label.pack()
+    
+    def clock():
+        global Total_Cost_Time
+        if Array_no <= Arry_Num:
+            Total_Cost_Time += 1
+            fen  = Total_Cost_Time//60
+            miao = Total_Cost_Time%60
+            txt  = "用时：%-1d分%-1d秒"%(fen, miao)
+            clk_label.config(text=txt)
+            clk.after(1000, clock)
+        else:
+            clk.destroy()
+
+    clock()
+
     ProblemWin(Problem_List)
     
+    #clk.protocol("WM_DELETE_WINDOW",clk.withdraw())
+    clk.mainloop()
+
     time.sleep(1)
     MathScoreBoard(Answer_Tuple_List)
